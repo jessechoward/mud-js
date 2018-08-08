@@ -1,0 +1,22 @@
+{
+  "name": "mud-js",
+  "version": "1.0.0",
+  "description": "Text based MUD heavily influences from table top RPGs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "git+https://github.com/jessechoward/mud-js.git",
+  "keywords": [],
+  "author": "Jesse Howard <jessechoward@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jessechoward/mud-js/issues"
+  },
+  "homepage": "https://github.com/jessechoward/mud-js#readme",
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "lodash": "^4.17.10",
+    "winston": "^3.0.0"
+  }
+}
