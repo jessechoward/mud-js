@@ -1,2 +1,2 @@
 # mud-js
-Text based MUD heavily influences from table top RPGs
+Text based MUD engine heavily influenced from table top RPGs
