@@ -16,17 +16,24 @@ exports.AbilityTypes;
 
 class AbilityEffect extends EventEmitter
 {
-	constructor(name, ability, duration, modifier)
+	constructor(name, abilityType, duration, modifier)
 	{
 		this.id = uuid();
 		this.name = name;
-		this.ability = ability;
-		this.duration = duration;
-		this.end = Date.UTC() + duration;
-		this.modifier = modifier;
+		this.ability = AbilityType[ability] || null;
+		if (!this.ability) throw new Error(`Unknown ability'${ability}'`);
+		this.duration = duration || -1;
+		this._timeout = null;
+		this.end = this.duration > 0 ? Date.UTC() + duration : -1;
+		this.modifier = modifier || 0;
 
-		// set a timer to expire the modifier
-		this._timeout = setTimeout(() => {this.emit('expire', this.id)},  duration*1000);
+		// 
+		if (this.duration > 0)
+		{
+			// set a timer to expire the modifier
+			this._timeout = setTimeout(() => {this.emit('expire', this.id)},  duration*1000);
+			this.end = Date.UTC() + duration;
+		}
 	}
 
 	cancel()
