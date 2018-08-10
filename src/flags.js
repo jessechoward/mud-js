@@ -229,10 +229,10 @@ exports.FlagTable = class FlagTable
 	{
 		this._name = options.name;
 		this._flags = new Set();
-		options.flags.forEach((name) =>
+		options.flags.forEach((flag) =>
 		{
 			// make sure everything is lowercase and reduce/replace spaces and dashes with underscores
-			this._flags.add(name.toLowerCase().replace(/[ -]+/g, '_'));		
+			this._flags.add(flag.toLowerCase().replace(/[ -]+/g, '_'));		
 		});
 		this._flags = Object.freeze(this._flags);
 		this._combinable = options.combinable;
