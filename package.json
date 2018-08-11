@@ -15,9 +15,16 @@
   },
   "homepage": "https://github.com/jessechoward/mud-js#readme",
   "dependencies": {
+    "basic-auth": "^2.0.0",
+    "bcrypt": "^3.0.0",
+    "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "jsonschema": "^1.2.4",
+    "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.10",
     "uuid": "^3.3.2",
-    "winston": "^3.0.0"
+    "winston": "^3.0.0",
+    "ws": "^6.0.0"
   }
 }

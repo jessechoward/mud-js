@@ -1,4 +1,9 @@
-const myString = '1\n2\n3\n\n\n\n\n\n';
-const data = myString.split('\n');
+const bcrypt = require('bcrypt');
 
-console.log(data);
+for (let i=0; i < 10; i++)
+{
+	bcrypt.hash('jesse', (i+1)*2, (error, result) =>
+	{
+		console.log(result);
+	});
+}
