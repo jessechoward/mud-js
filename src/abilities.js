@@ -1,65 +1,34 @@
 const EventEmitter = require('events').EventEmitter;
-const uuid = require('uuid/v4');
+const utils = require('./utils');
 const Dice = require('./dice').Dice;
 const logger = require('./logging');
 
-const AbilityTypes =
+const effect_reduce = (effects) =>
 {
-	strength: 0,
-	intelligence: 1,
-	dexterity: 2,
-	wisdom: 3,
-	constitution: 4,
-	charisma: 5
+	return Objects.keys(effects).reduce((compound, key) =>
+	{
+		return compound + effects[key].modifier;
+	});
 };
-exports.AbilityTypes;
-
-class AbilityEffect extends EventEmitter
-{
-	constructor(name, abilityType, duration, modifier)
-	{
-		this.id = uuid();
-		this.name = name;
-		this.ability = AbilityType[ability] || null;
-		if (!this.ability) throw new Error(`Unknown ability'${ability}'`);
-		this.duration = duration || -1;
-		this._timeout = null;
-		this.end = this.duration > 0 ? Date.UTC() + duration : -1;
-		this.modifier = modifier || 0;
-
-		// 
-		if (this.duration > 0)
-		{
-			// set a timer to expire the modifier
-			this._timeout = setTimeout(() => {this.emit('expire', this.id)},  duration*1000);
-			this.end = Date.UTC() + duration;
-		}
-	}
-
-	cancel()
-	{
-		clearTimeout(this._timeout);
-	}
-}
-exports.AbilityEffect;
 
 class Ability
 {
-	constructor(maxScore, bonus)
+	constructor(options)
 	{
-		this._base = Dice.attributeRoll(maxScore, bonus);
-		this._mods = {};
-		this._score = this._base;
+		this._options = Object.assign({}, {maxScore: 30, bonus: 0, perms: []}, options);
+		this._baseScore = options.baseScore;
+		// temp effects will have to be applied externally
+		this._temp = {};
+		// resetPerms calls _updateScore
+		this.resetPerms();
 	}
 
 	_updateScore()
 	{
-		this._score = this._base;
-
-		for (let id in this._mods)
-		{
-			this._score += this._mods[id].value;
-		}
+		this._score = this.baseScore;
+		this._score += effect_reduce(this._perms);
+		this._score += effect_reduce(this._temp);
+		this._score = Math.min(this._score, this._options.maxScore);
 	}
 
 	get score()
@@ -67,26 +36,73 @@ class Ability
 		return this._score;
 	}
 
+	get baseScore()
+	{
+		return this._baseScore;
+	}
+
 	get modifier()
 	{
 		return Math.floor((this.score - 10) / 2);
 	}
 
-	applyEffect(effect)
+	applyPerm(modifier, type)
 	{
-		// add the new effect
-		this._mods[effect.id] = effect;
-
-		// make sure we capture the expiration event
-		effect.on('expire', (id) =>
-		{
-			delete this._mods[id];
-			this._updateScore();
-		});
-
+		const perm = {modifier: modifier, type: type};
+		// the id is the md5 of the perm
+		// this means we can't apply the same mod multiple times
+		// unless the modifier or type is different
+		this._perms[utils.md5(perm)] = perm;
 		this._updateScore();
+	}
 
-		return effect.id;
+	removePerm(id)
+	{
+		delete this._perms[id];
+		this._updateScore();
+	}
+
+	resetPerms()
+	{
+		this._perms = {};
+		for (let perm = 0; perm < perms.length; perm++) this.applyPerm(this._options.perms[perm]);
+		this._updateScore();
+	}
+
+	applyTemp(id, modifier, type)
+	{
+		this._temp[id] = id;
+		this._updateScore();
+	}
+
+	removeTemp(id)
+	{
+		delete this._temp[id];
+		this._updateScore();
+	}
+
+	check(bonus=0)
+	{
+		// https://roll20.net/compendium/dnd5e/Ability%20Scores#toc_4
+		return Dice.d20(this.modifier+bonus);
+	}
+
+	serialize()
+	{
+		const perms = [];
+		const keys = Object.keys(this._perms);
+		for (let key = 0; key < keys; key++)
+		{
+			perms.push(this._perms[keys[key]]);
+		}
+
+		return Object.assign({},
+		{
+			baseScore: this._base,
+			maxScore: this._maxScore,
+			bonus: this._bonus,
+			perms: perms 
+		});
 	}
 }
-exports.Ability = Ability;
+module.exports = Ability;

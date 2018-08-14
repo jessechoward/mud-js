@@ -7,10 +7,19 @@ const dbOptions = config.get('database.connection');
 
 if (dbOptions.logging)
 {
-	dbOptions.logging = (msg, options) => {logger[dbOptions.logging](msg, {options: options});};
+	// use the logger - make sure to bind the logging function
+	// back to the logger instance!
+	dbOptions.logging = logger[dbOptions.logger].bind(logger);
 }
 
 const db = new Sequelize(dbOptions);
+
+db.authenticate()
+	.catch((error) =>
+	{
+		logger.crit('Unable to connect to database', {error: error});
+		process.exit(-1);
+	});
 
 // load all .js files in this directory as db modules
 fs.readdirSync(__dirname)
@@ -26,6 +35,7 @@ fs.readdirSync(__dirname)
 	});
 
 // do any associations if they exist
+// IMPORTANT!!! Do this BEFORE calling sync!
 Object.keys(db.models).forEach((modelName) =>
 {
 	if (db.models[modelName].hasOwnProperty('associate')) db.models[modelName].associate();
