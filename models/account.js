@@ -30,7 +30,7 @@ module.exports = (sequelize, datatypes) =>
 {
 	const Account = sequelize.define('account',
 	{
-		id: {type: datatypes.STRING, allowNull: false, primaryKey: true, defaultValue: uuid()},
+		id: {type: datatypes.STRING, allowNull: false, primaryKey: true, defaultValue: uuid},
 		email: {type: datatypes.STRING, allowNull: false, unique: true},
 		password: {type: datatypes.STRING, allowNull: false},
 		enabled: {type: dataTypes.BOOLEAN, defaultValue: true}
