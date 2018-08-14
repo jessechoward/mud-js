@@ -1,16 +1,16 @@
 const config = require('config');
 const fs = require('fs');
 const path = require('path');
-const bluebird = require('bluebird');
-const redis = require('redis');
+const Sequelize  = require('sequelize');
+const logger = require('../src/logging');
+const dbOptions = config.get('database.connection');
 
-// promisify redis
-bluebird.promisifyAll(redis);
+if (dbOptions.logging)
+{
+	dbOptions.logging = (msg, options) => {logger[dbOptions.logging](msg, {options: options});};
+}
 
-// initialize redis
-const redisClient = redis.createClient(config.get('redis.clientOptions'));
-// the db object to add models to
-const db = {};
+const db = new Sequelize(dbOptions);
 
 // load all .js files in this directory as db modules
 fs.readdirSync(__dirname)
@@ -21,14 +21,27 @@ fs.readdirSync(__dirname)
 	// consisting of filenames that pass the filter test and return true
 	.forEach((filename) =>
 	{
-		// require the file and add the module as a part of the db
-		// we will pass the redis connection to the module.exports function of each module
-		db[path.basename(filename, 'js').toLowerCase()] = require(path.join(__dirname, __filename)(redisClient));
+		// import models
+		db.import(path.join(__dirname, filename));
 	});
 
-// shouldn't need this but add the redisClient for direct use
-db.redisClient = redisClient;
-// a pubsub connection exclusively for pubsub operations
-db.pubsub = redisClient.pubsub();
+// do any associations if they exist
+Object.keys(db.models).forEach((modelName) =>
+{
+	if (db.models[modelName].hasOwnProperty('associate')) db.models[modelName].associate();
+});
+
+// create tables if they dont exist
+db.sync(config.get('database.sync'))
+	.then((result) =>
+	{
+		logger.info('Sync database complete');
+	})
+	.catch((error) =>
+	{
+		logger.crit('Failed to sync database', {error: error});
+		// this is a fatal error
+		process.exit(1);
+	});
 
 module.exports = db;
