@@ -1,0 +1,40 @@
+div {
+	margin: 1px;
+	border: 1px solid black;
+	padding: 1px;
+}
+
+#main-container {
+	width: 100%;
+	height: 100%;
+	overflow: none;
+}
+
+#terminal-container {
+	position: relative;
+	flex: 0 1 auto;
+	width: 1024px;
+	/* height: 100%; */
+	min-width: 400px;
+	min-height: 500px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	resize: both;
+}
+
+#terminal-output {
+	width: 100%;
+	height: auto;
+	overflow-x: none;
+	overflow-y: scroll;
+}
+
+#terminal-input {
+	position: absolute;
+	bottom: 0;
+}
+
+#feature-container {
+	width: 100%;
+	max-width: 700px;
+}

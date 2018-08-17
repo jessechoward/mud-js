@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>MUD-JS</title>
+
+    <!-- Bootstrap -->
+	<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<!-- MUD-js -->
+    <link href="css/mud-js.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+	<!-- Our nav-bar - keep it simple! -->
+    <div class="container-fluid">
+		<nav class="nav">
+			<a class="nav-link" href="#">Home</a>
+			<a class="nav-link" href="#help">Help</a>
+		</nav>
+	</div>
+	<!-- The main container -->
+	<div id="main-container" class="d-flex">
+		<div id="terminal-container" class="d-inline-block"> Terminal
+			<div id="terminal-output" class="container-fluid"><p>some text</p></div>
+			<div id="terminal-input" class="container-fluid float-bottom">
+				<form autocomplete="off">
+					<input id="user-input" class="form-control">
+				</form>
+			</div>
+		</div>
+		<div id="feature-container" class="d-inline-block"> Features
+			<div>Some feature text</div>
+		</div>
+	</div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

@@ -34,40 +34,36 @@ exports.DiceType = DiceType;
  */
 class Dice
 {
-	constructor(diceOptions={})
-	{
-		this._count = diceOptions.count || 1;
-		this._type = diceOptions.type || 'd6';
-		this._sides = DiceType[this._type] || 1;
-		this._bonus = DiceType.bonus || 0;
-
-		if (this._count >= 100)
-			logger.warning('High number of dice being assigned', {count: this._count});
-		if (this._sides === 0)
-			logger.warning('An invalid dice type resulting in 1 side is being used', {type: this._type});
-	}
-
 	/**
-	 * Roll our dice and apply our optional bonus modifier
+	 * Roll our dice and apply an optional bonus modifier
 	 *
 	 * @returns {int} the sum
 	 * @memberof Dice
 	 */
-	roll()
+	static roll(count, type='d6', bonus=0)
 	{
-		// add the bonus as the base
-		let rval = this._bonus;
+		const sides = DiceType[type];
 
-		for (let die = 0; die < this._count; die++)
+		if (!sides)
 		{
-			rval += randRange(1, this._sides);
+			logger.error('Attempt to use invalid dice type', {dice_type: type});
+			return 0;
 		}
+
+		if (this._count >= 100)
+			logger.warning('High number of dice being assigned', {dice_count: count});
+
+		// add the bonus as the base
+		let rval = bonus;
+
+		for (let die = 0; die < this.count; die++)
+		{
+			rval += randRange(1, sides);
+		}
+
+		return rval;
 	}
 
-	/****************************************************************
-	 * Common rolls that we do not need to instantiate dice for
-	 ****************************************************************/
-	
 	/**
 	 * Roll for a percentage using a "tens" die and a "ones" die.
 	 * Rolling a double 00 and a 0 (sum == 0) results in a 100
@@ -99,7 +95,7 @@ class Dice
 	 */
 	static d20(bonus=0)
 	{
-		return randRange(1, 20) + bonus;
+		return Dice.roll(1, 'd20', bonus);
 	}
 
 	/**
@@ -112,7 +108,7 @@ class Dice
 	 */
 	static advantage(bonus=0)
 	{
-		return Math.max(randRange(1, 20), randRange(1,20)) + bonus;
+		return Math.max(Dice.d20(), Dice.d20()) + bonus;
 	}
 
 	/**
@@ -125,7 +121,7 @@ class Dice
 	 */
 	static disadvantage(bonus=0)
 	{
-		return Math.min(randRange(1, 20), randRange(1,20)) + bonus;
+		return Math.min(Dice.d20(), Dice.d20()) + bonus;
 	}
 
 	/**
@@ -139,11 +135,24 @@ class Dice
 	 */
 	static attributeRoll(maxScore=30, bonus=0)
 	{
-		// 3 x 1d6 rolls
-		const base = randRange(1,6) + randRange(1,6) + randRange(1,6);
+		// hard code the max score to 30
+		maxScore = Math.min(maxScore, 30);
+		// we treat the bonus as a base
+		let total = bonus;
+		let worst = 0;
+
+		// roll 4 dice
+		for (let roll = 0; roll < 4; roll++)
+		{
+			const rollValue = Dice.roll(1, 'd6');
+			total += rollValue;
+			if (rollValue < worst) worst = rollValue;
+		}
+		// drop the worst roll
+		total -= worst;
 
 		// constrain the result inside the maxScore
-		return Math.min(base+bonus, maxScore);
+		return Math.min(total, maxScore);
 	}
 };
 exports.Dice = Dice;

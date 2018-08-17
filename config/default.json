@@ -1,0 +1,23 @@
+{
+	"server":
+	{
+		"address": "localhost",
+		"port": "5000"
+	},
+	"database":
+	{
+		"dialect": "mysql",
+		"storage": "./mudjs.db",
+		"database": "mudjs",
+		"host": "localhost",
+		"port": 3306,
+		"username": "mudjs-changeme",
+		"password": "mudjs-changeme",
+		"logging": "debug",
+		"sync":
+		{
+			"force": false,
+			"alter": false
+		}
+	}
+}

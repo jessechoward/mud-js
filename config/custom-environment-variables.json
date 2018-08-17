@@ -1,3 +1,18 @@
 {
-	
+	"server":
+	{
+		"address": "LISTEN_ADDRESS",
+		"port": "LISTEN_PORT"
+	},
+	"database":
+	{
+		"database": "DB_NAME",
+		"username": "DB_USER",
+		"password": "DB_PASSWORD",
+		"sync":
+		{
+			"force": "DB_SYNC_FORCE",
+			"alter": "DB_SYNC_ALTER"
+		}
+	}
 }

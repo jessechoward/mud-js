@@ -3,13 +3,24 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize  = require('sequelize');
 const logger = require('../src/logging');
-const dbOptions = config.get('database.connection');
+const dbOptions = config.get('database');
 
+// set the database.options.logging to false to disable
+// logging of every query. This should only be 'debug'
+// or 'info'. Default is in <project root>/config/defaults.json.
 if (dbOptions.logging)
 {
-	// use the logger - make sure to bind the logging function
-	// back to the logger instance!
-	dbOptions.logging = logger[dbOptions.logger].bind(logger);
+	if (['debug', 'info'].includes(dbOptions.logging))
+	{
+		// use the logger - make sure to bind the logging function
+		// back to the logger instance!
+		dbOptions.logging = logger[dbOptions.logger].bind(logger);
+	}
+	else
+	{
+		// set to false
+		dbOptions.logging = false;
+	}
 }
 
 const db = new Sequelize(dbOptions);
