@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const requestId = require('express-request-id');
 const responseTime = require('response-time');
+const WebsocketServer = require('./websocket/server');
 const logger = require('./src/logging');
 
 // log web-requests
@@ -59,20 +60,21 @@ app.use(bodyParser.urlencoded({extended: true}));
 // and before our route handling
 app.use(requestLogger);
 
+// setup routes
+const publicRoutes = express.static(path.join(__dirname, 'static'));
+const apiRoutes = require(path.join(__dirname, 'routes', 'api'));
+
 // public static routes to get the client
-app.use('/', express.static(path.join(__dirname, 'static')));
+app.use('/', publicRoutes);
 // routes for api access
 app.use('/api', require(path.join(__dirname, 'routes', 'api')));
-// routes for websockets
-app.use('/websocket', require(path.join(__dirname, 'routes', 'websocket')));
 
 // start listening for connections
 const server = app.listen(config.get('server.port'), config.get('server.address'), () =>
 {
 	logger.info('Server start', {address: server.address().address, port: server.address().port});
+	// we can use the web server once it has actually started
+	const websocketServer = new WebsocketServer(server);
 });
 
-// export the app
-exports.app = app;
-// export the listening server
-exports.server = server;
+module.exports = server;

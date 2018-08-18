@@ -1,4 +1,5 @@
 const os = require('os');
+const config = require('config');
 const Winston = require('winston');
 const pkg = require('../package.json');
 
@@ -23,7 +24,7 @@ const logger = Winston.createLogger(
 	// syslog level names
 	levels: Winston.config.syslog.levels,
 	// default logging level - supports environment variable overrides
-	level: process.env.LOG_LEVEL || 'info',
+	level: config.get('server.log_level'),
 	// silent mode - useful for testing
 	silent: process.env.MUTE_LOGGING || false,
 	transports:
@@ -31,7 +32,6 @@ const logger = Winston.createLogger(
 		new Winston.transports.Console(
 		{
 			format: Winston.format.combine(
-				Winston.format.json(),
 				Winston.format.timestamp(),
 				// custom app data added to every log entry
 				appData()

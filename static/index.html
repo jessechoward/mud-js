@@ -20,30 +20,51 @@
     <![endif]-->
   </head>
   <body>
-	<!-- Our nav-bar - keep it simple! -->
-    <div class="container-fluid">
-		<nav class="nav">
-			<a class="nav-link" href="#">Home</a>
-			<a class="nav-link" href="#help">Help</a>
-		</nav>
-	</div>
-	<!-- The main container -->
-	<div id="main-container" class="d-flex">
-		<div id="terminal-container" class="d-inline-block"> Terminal
-			<div id="terminal-output" class="container-fluid"><p>some text</p></div>
-			<div id="terminal-input" class="container-fluid float-bottom">
-				<form autocomplete="off">
-					<input id="user-input" class="form-control">
-				</form>
+		<!-- registration and login container -->
+		<div id="account-login" class="modal fade" role="dialog">
+			<!-- login modal -->
+			<div class="modal-dialog">
+				<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Login</h4>
+							<button type="button" class="btn btn-danger close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="login-form" class="form">
+								<input type="text" class="form-control mb-1" name="email" placeholder="Email Address" required="" autofocus="" autocomplete="">
+								<input type="password" class="form-control mb-1" name="password" placeholder="Password" required="" autofocus="" autocomplete="">
+								<p id="login-error" class="small text-center text-danger invisible">some error text here</p>
+								<button id="loginButton" type="submit" class="btn btn-primary btn-block mt-5">Login</button>
+							</form>
+						</div>
+				</div>
 			</div>
 		</div>
-		<div id="feature-container" class="d-inline-block"> Features
-			<div>Some feature text</div>
+		<!-- Our nav-bar - keep it simple! -->
+  	<div id="navbar" class="container-fluid">
+			<nav class="nav">
+				<a class="nav-link" href="#">Home</a>
+				<a class="nav-link" href="#help">Help</a>
+				<a class="nav-link" href="#account-login" data-toggle="modal">Login</a>
+			</nav>
 		</div>
-	</div>
+		<!-- The main container -->
+		<div id="main-container">
+			<div id="feature-container" class="card">
+					<button id="toggle-connection">Connect</button>
+			</div>
+			<div id="terminal-container" class="card">
+				<div id="terminal-output"></div>
+				<textarea id="user-input" autofocus="true" rows="1"></textarea>
+			</div>
+		</div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+		<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+		<!-- Include mudjs client handling -->
+    <script src="js/main.js"></script>
   </body>
 </html>

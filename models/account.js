@@ -85,23 +85,24 @@ module.exports = (sequelize, datatypes) =>
 
 	// Authenticate
 	// this is a static method since we are looking for an instance
-	Account.authenticate = function (email, plainTextPassword)
+	Account.authenticate = function (email, plainText)
 	{
 		return new Promise((resolve, reject) =>
 		{
 			Account.findOne({where: {email: email}})
 			.then((account) =>
 			{
-				bcrypt.compare(plainText, instance.password, (error, match) =>
+				bcrypt.compare(plainText, account.password, (error, match) =>
 				{
-					if (error) return reject(error);
+					if (error) return reject({error: error});
 
-					return resolve(match);
+					return resolve({id: account.id, authenticated: match});
 				});
 			})
 			.catch((error) =>
 			{
-				return reject(error);
+				logger.error('Database error', {error: error});
+				return reject({error: error});
 			});			
 		});
 	};

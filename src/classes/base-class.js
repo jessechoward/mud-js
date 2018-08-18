@@ -63,5 +63,16 @@ class BaseClass
 		return total;
 	}
 
+	/**
+	 * Add a level to this class
+	 *
+	 * @param {int} level - a number between 2 and MAX_CLASS_LEVEL inclusive
+	 * @memberof BaseClass
+	 */
+	onLevelUp(level)
+	{
+
+	}
+
 	
 }
