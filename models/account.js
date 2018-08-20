@@ -33,6 +33,7 @@ module.exports = (sequelize, datatypes) =>
 		id: {type: datatypes.STRING, allowNull: false, primaryKey: true, defaultValue: uuid},
 		email: {type: datatypes.STRING, allowNull: false, unique: true},
 		password: {type: datatypes.STRING, allowNull: false},
+		validated: {type: dataTypes.BOOLEAN, defaultValue: false},
 		enabled: {type: dataTypes.BOOLEAN, defaultValue: true}
 	},
 	// options
@@ -89,15 +90,22 @@ module.exports = (sequelize, datatypes) =>
 	{
 		return new Promise((resolve, reject) =>
 		{
-			Account.findOne({where: {email: email}})
+			Account.findOne({where: {email: email, enabled: true}})
 			.then((account) =>
 			{
-				bcrypt.compare(plainText, account.password, (error, match) =>
+				if (account)
 				{
-					if (error) return reject({error: error});
+					bcrypt.compare(plainText, account.password, (error, match) =>
+					{
+						if (error) return reject({error: error});
+						// never return PII!
+						// which includes email!
+						// https://en.wikipedia.org/wiki/Personally_identifiable_information
+						return resolve({id: account.id, authenticated: match});
+					});
+				}
 
-					return resolve({id: account.id, authenticated: match});
-				});
+				return reject({error: 'not found'});
 			})
 			.catch((error) =>
 			{

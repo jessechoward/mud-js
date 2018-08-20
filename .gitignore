@@ -1,6 +1,7 @@
 node_modules
 *.pem
 *.key
+*.pub
 .env
 # we will use gulp to build these
-static/vendor/bootstrap
+static/vendor
