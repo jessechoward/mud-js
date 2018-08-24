@@ -33,7 +33,9 @@ module.exports = (sequelize, datatypes) =>
 		id: {type: datatypes.STRING, allowNull: false, primaryKey: true, defaultValue: uuid},
 		email: {type: datatypes.STRING, allowNull: false, unique: true},
 		password: {type: datatypes.STRING, allowNull: false},
-		validated: {type: dataTypes.BOOLEAN, defaultValue: false},
+		// this defaults to true until we actually build a 2 factor
+		// validation setup
+		validated: {type: dataTypes.BOOLEAN, defaultValue: true},
 		enabled: {type: dataTypes.BOOLEAN, defaultValue: true}
 	},
 	// options

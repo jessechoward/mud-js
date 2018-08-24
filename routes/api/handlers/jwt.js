@@ -129,6 +129,7 @@ const verify = (req, res, next) =>
 exports.verify = verify;
 
 // revoke a jwt by id
+// todo: still need to hook this into live sessions
 const revoke = (jwtId, reason={}) =>
 {
 	// revoked is a module scoped private variable used to keep track

@@ -32,10 +32,11 @@ exports.set = (key, value, expires) =>
 /**
  * get a value from the cache at key
  * @param {string} key the key to look for the data at
+ * @param {boolean} [remove=false] optionally remove the key after we have fetched it 
  * @returns {Promise} resolves with Object from cache or undefined if not found.
  * rejects on error
  */
-exports.get = (key) =>
+exports.get = (key, remove=false) =>
 {
 	return new Promise((resolve, reject) =>
 	{
@@ -46,6 +47,10 @@ exports.get = (key) =>
 				logger.error('redis cache error', {error: error});
 				return reject(error);
 			}
+
+			// optionally remove the key
+			// we don't care about the response
+			client.del(key);
 			// although it isn't an error, the key may not exist
 			return resolve(reply ? JSON.parse(reply) : undefined);
 		});

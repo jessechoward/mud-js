@@ -1,3 +1,4 @@
+const express = require('express');
 const Ajv = require('ajv');
 const codes = require('http-status-codes');
 const db = require('../../../models');
@@ -18,43 +19,27 @@ const regSchema =
 	required: ['email', 'password']
 };
 
-const validate = (req, res, next) =>
+const validateRequest = (req, res, next) =>
 {
 	if (jsonschema.validate(regSchema, req.body)) return next();
 
 	return res.status(codes.BAD_REQUEST).json({error: jsonschema.errorsText});
 };
+exports.validateRequest = validateRequest;
 
-const create = (req, res, next) =>
+const createAccount = (req, res, next) =>
 {
 	if (!jsonschema.validate(regSchema, req.body))
 	{
 		return res.status(codes.BAD_REQUEST).json({error: jsonschema.errorsText});
 	}
 
-	const overwrite = ['on', 'y', 'yes', 'true', 1, true].includes((req.query.overwrite || '').toLowerCase());
-
 	db.models.Accounts.findOrCreate({where: {email: req.body.email}, defaults: req.body})
 		.spread((account, created) =>
 		{
-			if (!created && (account.validated || !overwrite))
+			if (!created)
 			{
 				return res.status(codes.CONFLICT).json({error: 'Account already exists'});
-			}
-			else if (overwrite && !account.validated)
-			{
-				account.password = req.body.password;
-				account.save()
-					.then(() =>
-					{
-						req.account = {id: account.id, authenticated: true};
-						return next();
-					})
-					.catch((error) =>
-					{
-						logger.error('Unable to register');
-						return res.status(codes.INTERNAL_SERVER_ERROR).json({error: 'unable to create account'});
-					})
 			}
 
 			req.account = {id: account.id, authenticated: true};
@@ -66,8 +51,6 @@ const create = (req, res, next) =>
 			return res.status(codes.INTERNAL_SERVER_ERROR).json({error: error});
 		});
 };
+exports.createAccount = createAccount;
 
-const emailUrl = (req, res, next) =>
-{
-
-}
+exports.register = express.Router().use(validateRequest, createAccount);

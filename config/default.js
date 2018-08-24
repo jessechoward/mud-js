@@ -99,5 +99,14 @@ module.exports = {
 			port: 6379,
 			prefix: 'mudjs:'
 		}
+	},
+	email:
+	{
+		// you will definitely want to keep these out of 
+		// source control. Highly recommended to keep
+		// in environment variables in a local .env
+		// file or a protected process manager.
+		service: 'gmail',
+		auth: {user: 'someusername', pass: 'somepass'}
 	}
 };
