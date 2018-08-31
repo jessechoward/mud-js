@@ -106,6 +106,19 @@ const destroy = (req, res, next) =>
 	db.models.Accounts.findById(req.params.accountid)
 		.then((account) =>
 		{
-			if (!account) return res.
+			if (!account) return res.status(codes.NOT_FOUND).json({error: 'not found'});
+			return account.destroy()
+				.then(() =>
+				{
+					return next();
+				})
+				.catch((error) =>
+				{
+					return res.status(codes.INTERNAL_SERVER_ERROR).json({error: error});
+				});
 		})
+		.catch((error) =>
+		{
+			return res.status(codes.INTERNAL_SERVER_ERROR).json({error: error});
+		});
 };
